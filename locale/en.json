@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Boot animation",
+    "description": "Replaces the kernel boot page with a full-window video clip, then dissolves into the app. Clip pool, entry mode and fade are configurable."
+  }
+}

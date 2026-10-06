@@ -1,0 +1,49 @@
+{
+  "name": "dsh-boot-animation",
+  "version": "0.2.0",
+  "description": "把 DSH 启动页换成一段全窗口短片，播完淡出进入应用；素材池、进入方式与淡入时长可配置，不改 DSH 本体源码。",
+  "license": "MIT",
+  "author": "lxj5820",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lxj5820/dsh-boot-animation.git"
+  },
+  "homepage": "https://github.com/lxj5820/dsh-boot-animation#readme",
+  "bugs": {
+    "url": "https://github.com/lxj5820/dsh-boot-animation/issues"
+  },
+  "type": "module",
+  "main": "entry.js",
+  "exports": {
+    ".": "./entry.js",
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "assets",
+    "lib",
+    "locale",
+    "src",
+    "cordis.patch.yml",
+    "entry.js",
+    "package.json"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "*"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
