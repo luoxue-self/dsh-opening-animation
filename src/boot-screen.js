@@ -99,7 +99,7 @@
   }
 
   function pickClip(clips) {
-    var recentKey = 'dsh-boot-animation:recent'
+    var recentKey = 'dsh-opening-animation:recent'
     var recent = []
     try {
       recent = JSON.parse(sessionStorage.getItem(recentKey) || '[]')

@@ -1,5 +1,5 @@
 #!/bin/sh
-# install.sh - install dsh-boot-animation into a DSH profile (macOS / Linux).
+# install.sh - install dsh-opening-animation into a DSH profile (macOS / Linux).
 #
 # The POSIX twin of install.ps1: the same two changes to the profile, the same
 # backup, the same checks. Every path is either derived from this script's own
@@ -7,7 +7,7 @@
 # when it cannot find what it needs rather than writing somewhere unexpected.
 #
 # What it does:
-#   1. a symlink at <profile>/node_modules/dsh-boot-animation
+#   1. a symlink at <profile>/node_modules/dsh-opening-animation
 #   2. one appended row in <profile>/cordis.patch.yml
 # It does NOT touch package.json, does NOT run pnpm, and does NOT restart dsh.
 #
@@ -26,15 +26,15 @@
 # Usage:
 #   sh tools/install.sh
 #   sh tools/install.sh --profile desktop
-#   sh tools/install.sh --dsh-home /home/me/.dsh --package-dir /opt/dsh-boot-animation
+#   sh tools/install.sh --dsh-home /home/me/.dsh --package-dir /opt/dsh-opening-animation
 #   sh tools/install.sh --port 19387
 
 set -u
 LC_ALL=C
 export LC_ALL
 
-PLUGIN_NAME='dsh-boot-animation'
-PATCH_ID='boot-animation'
+PLUGIN_NAME='dsh-opening-animation'
+PATCH_ID='opening-animation'
 SCHEMA_NAME='@deepseek-ai/schemastery'
 # Minimum copy that has Schema.prototype.volatile.
 SCHEMA_MIN_VERSION='3.18.4'
@@ -218,7 +218,7 @@ link_to() {
 # uninstall.sh removes. Counting them is what keeps "what install adds" and "what
 # uninstall takes away" the same thing. A bare mention of the name is not enough:
 # the settings service writes an id-targeted config-override row of its own
-# (`- id: boot-animation` with a `config:` block, no `insert:`), and that row
+# (`- id: opening-animation` with a `config:` block, no `insert:`), and that row
 # mounts nothing on its own - treating it as "already installed" would leave the
 # plugin off the graph. Prints nothing readable when the file cannot be parsed.
 insert_rows() {

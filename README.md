@@ -4,7 +4,7 @@
 >
 > 下文中出现的绝对路径都是**作者机器的开发记录**，不是给你的操作指令。
 
-# dsh-boot-animation
+# dsh-opening-animation
 
 DSH 启动加载动画：短片**片尾交叉溶解进界面**、多片随机、启动进度可见、启动失败有兜底，**淡入时长 / 进入方式 / 素材池都在「设置 → 插件」里可调**。**不改 DSH 本体源码**，升级 DSH 不受影响。
 
@@ -44,7 +44,7 @@ DSH 启动加载动画：短片**片尾交叉溶解进界面**、多片随机、
 
 > **下面这段记的是 0.2.0-rc.2 之前的接法，已经失效**——保留它是因为症状仍然会以同样的面目出现。当前事实见紧随其后的「适配 DSH 0.2.0-rc.2」。
 
-它是怎么接进去的：DSH 的设置页把「插件配置」页渲染成**两份账本的交集**——Host 提供（`settings.register`）的设置命名空间，和浏览器注册进 `settings.plugin.item` 槽位的卡片。两张卡片的配对键就是命名空间字符串（`boot-animation`），所以两半各在一边、互不相识。这也是 DSH 给**本仓库之外的插件**预留的路径，`ui-settings-plugins` 的槽位注释写得很明白。
+它是怎么接进去的：DSH 的设置页把「插件配置」页渲染成**两份账本的交集**——Host 提供（`settings.register`）的设置命名空间，和浏览器注册进 `settings.plugin.item` 槽位的卡片。两张卡片的配对键就是命名空间字符串（`opening-animation`），所以两半各在一边、互不相识。这也是 DSH 给**本仓库之外的插件**预留的路径，`ui-settings-plugins` 的槽位注释写得很明白。
 
 > **卡片这一半我没法在这里验证。** 客户端 React 组件在真机 GUI 里长什么样、点下去有没有反应，只有你刷新看一眼才知道——沙箱里起不了浏览器。我能做到的是：把 `lib/client.js` 加载进桩 React + 桩 DOM **真渲染一遍**，断言三个小节渲染出来了、当前值被标为选中、点「4 秒」真的把 `fadeMs: 4000` 写进设置。这能拦住"接线错了/渲染抛了"，拦不住"样式在真主题下难看"。
 
@@ -53,7 +53,7 @@ DSH 启动加载动画：短片**片尾交叉溶解进界面**、多片随机、
 DSH 0.2.0-rc.2 **删掉了 Host 侧 `settings.register(ns, schema)`**：现在命名空间不是"注册"出来的，而是**由插件条目本身派生**的。规则有三条，缺一条卡片就不出现：
 
 1. **声明，而不是注册。** 插件模块的导出对象上要有一个 `Config`（schemastery schema）。`RegistryService.plugin()` 把它记成 `runtime.Config`，`@deepseek-ai/dsh-settings` 的 `describe()` 只挑**正在运行、且解析得到 `Config`** 的条目。
-2. **命名空间 = profile 补丁里的条目 id。** 这里是 `cordis.patch.yml` 里的 `- insert: id: boot-animation`。浏览器半侧在 `src/client.js` 的 `SETTINGS_NAMESPACE` 里写同一个字符串，通过客户端的 `configForms` 服务（`whileServed` + `get`）接上——**没有第二本账**，也不再有 `settings.plugin.item` 这个槽位（现在是 `plugins.item`）。
+2. **命名空间 = profile 补丁里的条目 id。** 这里是 `cordis.patch.yml` 里的 `- insert: id: opening-animation`。浏览器半侧在 `src/client.js` 的 `SETTINGS_NAMESPACE` 里写同一个字符串，通过客户端的 `configForms` 服务（`whileServed` + `get`）接上——**没有第二本账**，也不再有 `settings.plugin.item` 这个槽位（现在是 `plugins.item`）。
 3. **字段必须标 `.volatile()`。** `describe()` 内部先做一次 `volatileForm(schema)` 投影，**只保留 volatile 字段**；一个 volatile 字段都没有时它返回 `undefined`，条目被整个跳过——`describe()` 连这条都不返回，`whileServed` 自然永不触发。写入侧同样：`write()`（`update`/`replace`/`mutate` 全走它）对非 volatile 路径直接抛 `Config field "..." is not volatile`。所以七个字段全部标了。
 
 `.volatile()` 还有一个必须知道的后座力：**它在 `apply(ctx, config)` 里给的不是值，是一个稳定引用**（`{ get() }`，用 `Symbol.for('cosmokit.volatile.write')` 跨 ESM/CJS 副本识别）。要 `.get()` 才是当前快照——`dsh-bash-local` 也是这么读的（`config.timeoutMs.get()`）。这也是"改完刷新就生效"的机制：只有 volatile 值变化时，`@deepseek-ai/cordis-plugin-loader` 会把新快照**原地提交进同一个引用**并发出 `loader/volatile-update`，**不重启 fiber**，所以下一次 index 渲染读到的就是新值。`entry.js` 里对应的是 `readField()`。
@@ -64,7 +64,7 @@ DSH 0.2.0-rc.2 **删掉了 Host 侧 `settings.register(ns, schema)`**：现在�
 
 设置命名空间需要一个 schema，用的是 DSH 自己的 `@deepseek-ai/schemastery`。它在 `entry.js` 里是**惰性 `import`**，而 **ESM 解析不认 `NODE_PATH`，只从"导入文件所在目录"逐级往上找 `node_modules`**——而且会先把符号链接解析成真实路径。
 
-本插件是通过 junction 装进 profile 的，真实路径是 `D:\DSH\dsh-boot-animation\package`，上一级根本没有 `node_modules`，于是 `import` 必然失败（表现是"设置里没有这张卡"，但插件本身照常工作，因为 registration 失败只损失设置面）。两处修好了：
+本插件是通过 junction 装进 profile 的，真实路径是 `D:\DSH\dsh-opening-animation\package`，上一级根本没有 `node_modules`，于是 `import` 必然失败（表现是"设置里没有这张卡"，但插件本身照常工作，因为 registration 失败只损失设置面）。两处修好了：
 
 1. `package.json` 声明了 `dependencies: { "@deepseek-ai/schemastery": "^3.18.4" }`——正规 pnpm 安装时，pnpm 会在包的真实路径旁建 `node_modules`，就能解析。
 2. 当前这个 junction 安装，在包内建了 `node_modules/@deepseek-ai/schemastery` → profile 那副本的链接，所以**现在就生效**。
@@ -262,7 +262,7 @@ sh tools/uninstall.sh                  # --profile 同上
 ### 路一：免重启（推荐先试）
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-boot-animation\package\tools\apply-live.ps1
+powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-opening-animation\package\tools\apply-live.ps1
 ```
 
 只做三件事：备份你的 `cordis.patch.yml` → 在 profile 的 `node_modules` 里建一个目录链接 → 往 `cordis.patch.yml` **追加**一行（你原有行不动）。**不碰 `package.json`、不跑 pnpm、不重启 dsh。**
@@ -274,16 +274,16 @@ powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-boot-animation\package\tools
 撤销（同样不用重启）：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-boot-animation\package\tools\rollback-live.ps1
+powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-opening-animation\package\tools\rollback-live.ps1
 ```
 
 ### 路二：重启安装（写正式依赖）
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-boot-animation\package\tools\apply-boot-animation.ps1
+powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-opening-animation\package\tools\apply-opening-animation.ps1
 ```
 
-双击版：`D:\DSH\dsh-boot-animation\apply-boot-animation.bat`（**必须在 dsh 之外的窗口运行**——它会杀掉 3080 上的进程，也就杀掉了跑在 dsh 里的东西，包括帮你写这段的助手；它自己的控制台不受影响）。
+双击版：`D:\DSH\dsh-opening-animation\apply-opening-animation.bat`（**必须在 dsh 之外的窗口运行**——它会杀掉 3080 上的进程，也就杀掉了跑在 dsh 里的东西，包括帮你写这段的助手；它自己的控制台不受影响）。
 
 1. **写回滚点** —— profile 配置快照 + SHA256 清单，落到 `D:\develop\dsh\.dsh-rollback-bootanim-<时间戳>`
 2. **迁移接线**（`tools/migrate-wiring.mjs`，可先预演）—— 写 `dependencies`（`link:` 指向本包）+ `dsh.profile.bundles`，**移除路一在 `cordis.patch.yml` 里追加的 insert 行**（两层都挂会产出两条同 id 的 entry，已实测），建 node_modules 链接，然后用 **dsh 自己的 profile 加载器**断言"本插件恰好一层、组合后恰好一条 entry"；断言不过就自己把两个文件还原
@@ -301,10 +301,10 @@ powershell -ExecutionPolicy Bypass -File D:\DSH\dsh-boot-animation\package\tools
 **也可以手动接线**（等价，不跑脚本）：
 
 ```bash
-dsh plugin --profile web add link:D:/DSH/dsh-boot-animation/package
+dsh plugin --profile web add link:D:/DSH/dsh-opening-animation/package
 ```
 
-或在 `.dsh/profiles/web/package.json` 里加 `"dsh-boot-animation": "link:D:/DSH/dsh-boot-animation/package"` 到 `dependencies`、把 `dsh-boot-animation` 追加到 `dsh.profile.bundles`，再把包 junction 到 `node_modules/`，最后重启 dsh。
+或在 `.dsh/profiles/web/package.json` 里加 `"dsh-opening-animation": "link:D:/DSH/dsh-opening-animation/package"` 到 `dependencies`、把 `dsh-opening-animation` 追加到 `dsh.profile.bundles`，再把包 junction 到 `node_modules/`，最后重启 dsh。
 
 > ⚠️ **四个 PowerShell 脚本必须是纯 ASCII。** Windows PowerShell 5.1 会把无 BOM 文件的 CJK 字节按系统 ANSI 解码，足以吃掉字符串终止符、让整个脚本报 "missing terminator" 并指向无关行号。脚本里因此用通配符解析启动器路径，而不是写中文文件名；`tools/verify-powershell-ascii.mjs` 会守住这条。
 
@@ -420,7 +420,7 @@ node D:\DSH\deepseek-harness\apps\cli\lib\bin.js web --no-open --port 0
 >
 > ```powershell
 > $e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile(
->   'D:\DSH\dsh-boot-animation\package\tools\apply-boot-animation.ps1',[ref]$null,[ref]$e); $e.Count
+>   'D:\DSH\dsh-opening-animation\package\tools\apply-opening-animation.ps1',[ref]$null,[ref]$e); $e.Count
 > ```
 
 ## 目录
@@ -452,9 +452,9 @@ tools/install.sh             macOS / Linux 装机：回滚点 + 链接 + 追加 
 tools/uninstall.sh           上面那步的撤销：摘掉它追加的行 + 删链接，断言字节还原
 tools/apply-live.ps1         免重启接线：备份 + 建 node_modules 链接 + 追加 patch 行
 tools/rollback-live.ps1      撤销上面那一步
-tools/apply-boot-animation.ps1     装机：回滚点 + 迁移 + 重启 + 自检 + 自动回滚
-tools/rollback-boot-animation.ps1  手动撤销
-tools/deactivate-boot-animation.ps1 紧急拆除：摘掉 patch 行 + 删链接，纯 ASCII，已预演
+tools/apply-opening-animation.ps1     装机：回滚点 + 迁移 + 重启 + 自检 + 自动回滚
+tools/rollback-opening-animation.ps1  手动撤销
+tools/deactivate-opening-animation.ps1 紧急拆除：摘掉 patch 行 + 删链接，纯 ASCII，已预演
 assets/videos/            素材池（只放视频文件；子目录不入池）
 ```
 
@@ -469,8 +469,8 @@ assets/videos/            素材池（只放视频文件；子目录不入池）
 | `assets/ref/xiaoD_sheet_chibi.png` | 小D 的 Q 版定妆图（角色设定原图，不是素材） |
 | `assets/ref/xiaoD_sheet_detailed.png` | 小D 的精细版定妆图 |
 | `prompts.md` | 生成三段片头用的提示词记录（纯文本，没有脚本读它） |
-| `apply-boot-animation.bat` | 双击版装机入口，等于直接跑 `package/tools/apply-boot-animation.ps1` |
-| `tools/` | 早期的工作流脚本：`clip-probe.mjs`（浏览器里探素材参数，已被 `mp4-info.mjs` 与卡片自己的探针取代）、`restart-and-verify.ps1` / `restart-verify-detached.ps1`（重启+自检，已被 `apply-boot-animation.ps1` 合并）、`launch-dsh-no-open.bat`、`启动过渡样本.bat`（样本页启动器） |
+| `apply-opening-animation.bat` | 双击版装机入口，等于直接跑 `package/tools/apply-opening-animation.ps1` |
+| `tools/` | 早期的工作流脚本：`clip-probe.mjs`（浏览器里探素材参数，已被 `mp4-info.mjs` 与卡片自己的探针取代）、`restart-and-verify.ps1` / `restart-verify-detached.ps1`（重启+自检，已被 `apply-opening-animation.ps1` 合并）、`launch-dsh-no-open.bat`、`启动过渡样本.bat`（样本页启动器） |
 
 `verify-tree-hygiene.mjs` **只覆盖 `package/`**——这一层放的是项目自己的资料（定妆图、提示词）和一次性脚本，不是要发布的东西，所以按「有没有人引用」来判死反而会误伤。
 

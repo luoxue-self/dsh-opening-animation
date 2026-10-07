@@ -69,7 +69,7 @@ sh tools/install.sh                     # dsh web 用的那个（默认就是 we
    - **看不到这一行** → 设置卡片没注册上。现在这条几乎只有一个原因：
      插件旁边链接的 `@deepseek-ai/schemastery` **版本太旧**（要 3.18.4 及以上，
      它才有 `Schema.prototype.volatile`；没有这个方法的旧副本会让卡片静默消失）。
-     看 DSH 控制台里 `boot-animation:` 开头的黄色告警，照那句话把链接换掉即可：
+     看 DSH 控制台里 `opening-animation:` 开头的黄色告警，照那句话把链接换掉即可：
      把内核那份（随 DSH 一起发布、在 `app.asar` 里）解成盘上目录，再把
      `node_modules\@deepseek-ai\schemastery` 指过去。
 
@@ -99,8 +99,8 @@ sh tools/install.sh                     # dsh web 用的那个（默认就是 we
 profile 是热加载的，摘掉后刷新页面就回到 DSH 原生启动页，不必重启。
 
 摘掉插件无非两件事：删掉 `cordis.patch.yml` 里那个 `- insert:` 块（它未必在文件末尾，DSH 自己
-会重排这一层，所以**搜 `boot-animation` 找，别按位置找**），再删掉 profile 下的
-`node_modules\dsh-boot-animation` 链接（用 `cmd /c rmdir`，它只删链接，不会跟到插件目录里）。
+会重排这一层，所以**搜 `opening-animation` 找，别按位置找**），再删掉 profile 下的
+`node_modules\dsh-opening-animation` 链接（用 `cmd /c rmdir`，它只删链接，不会跟到插件目录里）。
 不想跑脚本就手工这么来。
 
 > 早先版本的 `uninstall.ps1` 不能用：它读回再写出 `cordis.patch.yml` 时按 ANSI 解码无 BOM 的
@@ -110,7 +110,7 @@ profile 是热加载的，摘掉后刷新页面就回到 DSH 原生启动页，�
 
 - **没有** `node_modules/`（依赖要现装）
 - **没有** `assets/videos/originals/`（作者重排前的原片备份，对使用者无用）
-- **没有**开发用的自检套件与安装脚本（`tools/verify-*`、`apply-boot-animation.ps1` 等）。
+- **没有**开发用的自检套件与安装脚本（`tools/verify-*`、`apply-opening-animation.ps1` 等）。
   那些绑定在作者的开发机上（要指向 DSH 源码 checkout），发出来只会让你困惑。
   要改代码看 [AGENTS.md](AGENTS.md)
 - README.md 是作者的完整开发记录，里面会提到上面那些没随包发出来的脚本——那是历史记录，不是使用说明

@@ -1,4 +1,4 @@
-// dsh-boot-animation — Host half.
+// dsh-opening-animation — Host half.
 //
 // Two contributions, both required for the overlay to exist at all:
 //
@@ -18,7 +18,7 @@
 // `@deepseek-ai/dsh-settings` describes every running entry whose resolved export
 // carries a `Config` schema — `entry.fiber.runtime.Config`, filled from this
 // module's `Config` export by `RegistryService.plugin` — keyed by the entry id in
-// the profile patch, here `boot-animation`. The browser half pairs with that same
+// the profile patch, here `opening-animation`. The browser half pairs with that same
 // string, through the client `configForms` service, which exposes only the
 // namespaces the Host actually serves. Two consequences are load-bearing:
 //
@@ -55,7 +55,7 @@ const BOOT_SCREEN_PATH = fileURLToPath(new URL('./src/boot-screen.js', import.me
 const VIDEO_EXTENSIONS = new Set(['.mp4', '.webm', '.m4v', '.mov'])
 
 /** Route prefix both the manifest and the clip bytes live under. */
-const ROUTE = '/plugins/dsh-boot-animation'
+const ROUTE = '/plugins/dsh-opening-animation'
 
 /**
  * The values the screen runs with when the applied config does not carry one.
@@ -178,7 +178,7 @@ function readField(config, key) {
  *
  * The namespace is not named here because it is no longer named anywhere on this
  * side: it is the entry id the profile patch mounts this row under,
- * `- insert: id: boot-animation`. `src/client.js` spells that same string in
+ * `- insert: id: opening-animation`. `src/client.js` spells that same string in
  * `SETTINGS_NAMESPACE`, and nothing else checks that the two agree.
  *
  * The field names, defaults and bounds are the ones the removed
@@ -202,7 +202,7 @@ export const Config = z.object({
 })
 
 /** Package name the loader mounts this row as. */
-export const name = 'dsh-boot-animation'
+export const name = 'dsh-opening-animation'
 
 /** Services this half consumes. */
 export const inject = ['webServer']
@@ -424,7 +424,7 @@ export function apply(ctx, config) {
 
   if (!LIVE_CAPABLE) {
     ctx.logger?.warn?.(
-      'boot-animation: the resolved @deepseek-ai/schemastery has no .volatile(), so DSH '
+      'opening-animation: the resolved @deepseek-ai/schemastery has no .volatile(), so DSH '
       + 'will not serve this entry as a settings namespace and the settings card stays '
       + 'hidden. Link node_modules/@deepseek-ai/schemastery to the copy the kernel loads '
       + '(>= 3.18.4).',
@@ -464,7 +464,7 @@ export function apply(ctx, config) {
         showHint: typeof showHint === 'boolean' ? showHint : DEFAULT_SETTINGS.showHint,
       }
     } catch (error) {
-      ctx.logger?.warn?.('boot-animation: settings unreadable, using defaults', error)
+      ctx.logger?.warn?.('opening-animation: settings unreadable, using defaults', error)
       return DEFAULT_SETTINGS
     }
   }
@@ -504,12 +504,12 @@ export function apply(ctx, config) {
           })),
         })
       })().catch((error) => {
-        ctx.logger?.error?.('boot-animation: manifest route failed', error)
+        ctx.logger?.error?.('opening-animation: manifest route failed', error)
         if (!res.headersSent) sendJson(res, 500, { error: 'internal' })
         else res.end()
       })
     },
-  }), 'boot-animation: manifest route')
+  }), 'opening-animation: manifest route')
 
   ctx.effect(() => server.register({
     kind: 'prefix',
@@ -531,12 +531,12 @@ export function apply(ctx, config) {
           throw error
         }
       })().catch((error) => {
-        ctx.logger?.error?.('boot-animation: clip route failed', error)
+        ctx.logger?.error?.('opening-animation: clip route failed', error)
         if (!res.headersSent) sendJson(res, 500, { error: 'internal' })
         else res.end()
       })
     },
-  }), 'boot-animation: clip route')
+  }), 'opening-animation: clip route')
 
   // `ctx.on` already returns a disposer the fiber tracks, so it is registered
   // directly rather than wrapped in an effect — matching the other subscribers
@@ -584,7 +584,7 @@ function bootScreenSource() {
   try {
     return readFileSync(BOOT_SCREEN_PATH, 'utf8')
   } catch (error) {
-    process.emitWarning(`boot-animation: cannot read ${BOOT_SCREEN_PATH}: ${String(error)}`)
+    process.emitWarning(`opening-animation: cannot read ${BOOT_SCREEN_PATH}: ${String(error)}`)
     return ''
   }
 }

@@ -1,5 +1,5 @@
 #!/bin/sh
-# uninstall.sh - remove dsh-boot-animation from a DSH profile (macOS / Linux).
+# uninstall.sh - remove dsh-opening-animation from a DSH profile (macOS / Linux).
 #
 # The inverse of install.sh, and the POSIX twin of uninstall.ps1: drop the patch
 # row this plugin appended, and remove the directory link it created. The package
@@ -18,8 +18,8 @@ set -u
 LC_ALL=C
 export LC_ALL
 
-PLUGIN_NAME='dsh-boot-animation'
-PATCH_ID='boot-animation'
+PLUGIN_NAME='dsh-opening-animation'
+PATCH_ID='opening-animation'
 
 say() { printf '%s %s\n' "$(date '+%H:%M:%S')" "$*"; }
 fail() { say "FAILED: $*"; exit 2; }
@@ -98,8 +98,8 @@ say "  backup = $BACKUP"
 say '=== 2/3 remove the row this plugin appended ==='
 # The block install.sh writes is exactly:
 #   - insert:
-#       - id: boot-animation
-#         name: dsh-boot-animation
+#       - id: opening-animation
+#         name: dsh-opening-animation
 # Match it by the row it names, and only when it is this plugin's row. The rewrite
 # keeps every other byte of the original: it is a line deletion, not a YAML
 # re-serialisation, so comments, quoting and line endings survive untouched.

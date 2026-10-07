@@ -1,4 +1,4 @@
-# dsh-boot-animation bundle layer: mounted by `dsh plugin add`, so a profile
+# dsh-opening-animation bundle layer: mounted by `dsh plugin add`, so a profile
 # gets this row without manual cordis.patch.yml edits. A profile-level patch
 # can still disable the row by id.
 #
@@ -10,5 +10,5 @@
 #   holdMs   how long to wait before releasing a boot that never settles
 
 - insert:
-    - id: boot-animation
-      name: dsh-boot-animation
+    - id: opening-animation
+      name: dsh-opening-animation

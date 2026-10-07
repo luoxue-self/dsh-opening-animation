@@ -5,7 +5,7 @@
 // imports nothing (React arrives through the factory's `require`), so there is
 // nothing to resolve and nothing to tree-shake. The wrapper is the whole build.
 //
-//   window.__ModuleLoader__.load({ id: "dsh-boot-animation", factory: (require) => {
+//   window.__ModuleLoader__.load({ id: "dsh-opening-animation", factory: (require) => {
 //   var module = { exports: {} }; var exports = module.exports;
 //   <src/client.js verbatim>
 //   return module.exports; } });

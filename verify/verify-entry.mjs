@@ -1,4 +1,4 @@
-// Offline verification for the dsh-boot-animation Host half after the
+// Offline verification for the dsh-opening-animation Host half after the
 // DSH 0.2.0-rc.2 port. No DSH process, no ports, no network, no prompts.
 //
 // Run from the package root that holds the ported entry.js:
@@ -110,7 +110,7 @@ writeFileSync(fixtureClip, Buffer.concat([
 console.log('\n[1] module shape')
 const mod = await import(new URL('.verify-entry/entry.js', new URL('../', import.meta.url)).href)
 equal('exported names', Object.keys(mod).sort(), ['Config', 'apply', 'inject', 'name'])
-equal('name', mod.name, 'dsh-boot-animation')
+equal('name', mod.name, 'dsh-opening-animation')
 equal('inject (no settings service)', mod.inject, ['webServer'])
 check('apply is a function', typeof mod.apply === 'function', 'typeof ' + typeof mod.apply)
 check('Config has toJSON (dsh-settings schema() gate)', 'toJSON' in mod.Config)
@@ -133,8 +133,8 @@ const DEFAULTS = {
 
 /** The same defaults as they reach the injected row (no `enabled`, no pool). */
 const INJECTED_DEFAULTS = {
-  base: '/plugins/dsh-boot-animation',
-  manifest: '/plugins/dsh-boot-animation/clips.json',
+  base: '/plugins/dsh-opening-animation',
+  manifest: '/plugins/dsh-opening-animation/clips.json',
   holdMs: 15000,
   fadeMs: 2000,
   enterMode: 'tail',
@@ -280,7 +280,7 @@ const enabled = mount(makeCtx(), Config({}))
 check('two routes registered', enabled.routes.length === 2,
   enabled.routes.map((r) => r.kind + ' ' + r.path).join(', '))
 equal('route kinds/paths', enabled.routes.map((route) => [route.kind, route.path]),
-  [['exact', '/plugins/dsh-boot-animation/clips.json'], ['prefix', '/plugins/dsh-boot-animation/clip']])
+  [['exact', '/plugins/dsh-opening-animation/clips.json'], ['prefix', '/plugins/dsh-opening-animation/clip']])
 check('no ctx.settings read, no warning', enabled.log.length === 0, JSON.stringify(enabled.log))
 
 const enabledRows = render(enabled)
@@ -371,7 +371,7 @@ async function callManifest(bundle) {
     end: (chunk) => { if (chunk !== undefined) body += chunk.toString('utf8') },
     headersSent: false,
   }
-  route.handler({ url: '/plugins/dsh-boot-animation/clips.json', method: 'GET', headers: {} }, res)
+  route.handler({ url: '/plugins/dsh-opening-animation/clips.json', method: 'GET', headers: {} }, res)
   for (let i = 0; i < 300 && body === ''; i++) await new Promise((resolve) => setTimeout(resolve, 10))
   return { headers, payload: JSON.parse(body) }
 }
@@ -384,7 +384,7 @@ const row = manifest.payload.clips[0]
 equal('clip row keys', Object.keys(row).sort(), ['bytes', 'enabled', 'faststart', 'name', 'src'])
 equal('clip row name', row.name, FIXTURE)
 check('clip row src shape',
-  new RegExp('^/plugins/dsh-boot-animation/clip/' + FIXTURE + '\\?v=\\d+-\\d+$').test(row.src), row.src)
+  new RegExp('^/plugins/dsh-opening-animation/clip/' + FIXTURE + '\\?v=\\d+-\\d+$').test(row.src), row.src)
 equal('clip row enabled with an empty disabledClips', row.enabled, true)
 equal('clip row faststart (moov before mdat)', row.faststart, true)
 check('clip row bytes > 0', row.bytes > 0, String(row.bytes))
@@ -412,7 +412,7 @@ check('apply(ctx, config) present', /export function apply\(ctx, config\)/.test(
 check('Config is an exported const', /export const Config = z\.object\(\{/.test(code))
 check('every field is marked live', (code.match(/\blive\(z\./g) ?? []).length === 7,
   String((code.match(/\blive\(z\./g) ?? []).length) + ' of 7')
-check('route prefix unchanged', code.includes("const ROUTE = '/plugins/dsh-boot-animation'"))
+check('route prefix unchanged', code.includes("const ROUTE = '/plugins/dsh-opening-animation'"))
 check('clip responses still no-store', (code.match(/'cache-control': 'no-store'/g) ?? []).length === 2)
 check('Range handling still present', code.includes('function parseRange(header, size)'))
 check('no backtick inside the injected row text', code.includes('globalThis.__DSH_BOOT_ANIM_CFG__'))
@@ -425,7 +425,7 @@ console.log('\n[7] package.json')
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 equal('peerDependencies', pkg.peerDependencies, { '@deepseek-ai/schemastery': '*' })
 check('no runtime dependencies', pkg.dependencies === undefined, JSON.stringify(pkg.dependencies))
-equal('name / version', [pkg.name, pkg.version], ['dsh-boot-animation', '0.2.0'])
+equal('name / version', [pkg.name, pkg.version], ['dsh-opening-animation', '0.2.0'])
 check('description untouched', typeof pkg.description === 'string' && pkg.description.length > 0)
 equal('exports carry the locale resource too',
   Object.keys(pkg.exports), ['.', './client', './cordis.patch.yml', './locale/*.json', './package.json'])

@@ -1,4 +1,4 @@
-# AGENTS.md — dsh-boot-animation
+# AGENTS.md — dsh-opening-animation
 
 Maintainer briefing. Written for whoever (or whatever) picks this up next: what the
 package is, which two facts about DSH it depends on, the invariants that break it
@@ -33,7 +33,7 @@ then dissolves into the app. No DSH source is modified: it injects a script into
    cannot pre-empt the boot page. `entry.js` subscribes to it.
 2. **A settings namespace is a plugin entry, and a field is served only if it is
    volatile.** The Host declares `Config` on the module namespace object; the
-   entry id in the profile patch (`- insert: id: boot-animation`) *is* the
+   entry id in the profile patch (`- insert: id: opening-animation`) *is* the
    namespace; the browser card reaches that same id through the client
    `configForms` service. `@deepseek-ai/dsh-settings` describes only an entry
    whose `Config` projects a non-empty form, and that projection keeps only
@@ -86,7 +86,7 @@ Every line here cost a real debugging session. They are not style preferences.
 | `assets/videos/*` | Reload. The manifest is read per request and clip URLs carry a content revision. |
 
 Installed state: the package is linked into a DSH profile
-(`<profile>/node_modules/dsh-boot-animation` → this directory) with a one-row
+(`<profile>/node_modules/dsh-opening-animation` → this directory) with a one-row
 `- insert:` block in the profile's `cordis.patch.yml`. `package.json` is not
 modified and no `pnpm install` runs. `tools/install.ps1` (Windows) and
 `tools/install.sh` (macOS / Linux) do it, and each one's `uninstall.*` reverses
@@ -151,7 +151,7 @@ still evaluates when the resolved schema library lacks `.volatile()`.
 |---|---|---|
 | "Only the background shows" | The hint line (it names the failed clip and reason), then the card's pool rows | A clip that never paints. The loader skips it after 6s and says so. |
 | "It works after a hard reload but not a normal one" | Response headers on the clip route | Something became cacheable. It must all be `no-store`. |
-| "No card in Settings" | Console for `boot-animation:` warnings | The `Config` schema was not resolved, no field is volatile (`volatileForm()` drops the entry), or the patch `id` and `SETTINGS_NAMESPACE` disagree. The warning names the first case outright. |
+| "No card in Settings" | Console for `opening-animation:` warnings | The `Config` schema was not resolved, no field is volatile (`volatileForm()` drops the entry), or the patch `id` and `SETTINGS_NAMESPACE` disagree. The warning names the first case outright. |
 | "No sound" | The audio-policy path in `toggleSound` / `startClip`, then the card's **播放影片声音** switch | Expected until the first click; Chromium will not autoplay unmuted. Confirm the hint says 开声音 — with the switch off there is deliberately no sound hint and no button. |
 | "It never enters" | The bound table in README ("启动路径上每个走不下去的地方都有上界") | Every route has a bound; if one fired, the hint line says which. |
 | "A new clip does not play" | The card's badges | `未优化` → run `tools/apply-faststart.bat`. |

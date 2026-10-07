@@ -1,4 +1,4 @@
-# uninstall.ps1 - remove dsh-boot-animation from a DSH profile.
+# uninstall.ps1 - remove dsh-opening-animation from a DSH profile.
 #
 # The inverse of install.ps1: drop the patch row this plugin appended, and remove
 # the directory link it created. The package directory itself is never deleted, and
@@ -31,7 +31,7 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
-$PluginName = 'dsh-boot-animation'
+$PluginName = 'dsh-opening-animation'
 
 function Say($m) { Write-Host "$(Get-Date -Format 'HH:mm:ss') $m" }
 function Fail($m) { Say "FAILED: $m"; exit 2 }
@@ -76,12 +76,12 @@ $removed = 0
 for ($i = 0; $i -lt $lines.Count; $i++) {
   # The block install.ps1 writes is exactly:
   #   - insert:
-  #       - id: boot-animation
-  #         name: dsh-boot-animation
+  #       - id: opening-animation
+  #         name: dsh-opening-animation
   # Match it by the row it names, and only when it is this plugin's row.
   if ($lines[$i] -match '^\s*- insert:\s*$' -and
       ($i + 2) -lt $lines.Count -and
-      $lines[$i + 1] -match '^\s*- id:\s*boot-animation\s*$' -and
+      $lines[$i + 1] -match '^\s*- id:\s*opening-animation\s*$' -and
       $lines[$i + 2] -match ('^\s*name:\s*' + [regex]::Escape($PluginName) + '\s*$')) {
     $i += 2
     $removed += 1

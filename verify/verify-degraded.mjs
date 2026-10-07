@@ -89,7 +89,7 @@ check('the config row still parses',
   table[0].text.startsWith('globalThis.__DSH_BOOT_ANIM_CFG__={'), table[0].text.slice(0, 40))
 equal('warnings recorded', log.length, 1)
 check('the warning names the cause and the fix',
-  log[0].includes('volatile') && log[0].includes('3.18.4') && log[0].startsWith('boot-animation:'), log[0])
+  log[0].includes('volatile') && log[0].includes('3.18.4') && log[0].startsWith('opening-animation:'), log[0])
 
 rmSync(scratch, { recursive: true, force: true })
 

@@ -1,4 +1,4 @@
-// dsh-boot-animation — browser half.
+// dsh-opening-animation — browser half.
 //
 // Two jobs, in this order and with this priority:
 //
@@ -17,7 +17,7 @@
 // the callback fires once both arrive, and simply never fires if they do not.
 //
 // NOT `ctx.get(name)`. That was the first attempt and it silently found nothing
-// in this deployment: `dsh-boot-animation` was the only client bundle in the whole
+// in this deployment: `dsh-opening-animation` was the only client bundle in the whole
 // profile reaching for `ctx.get('slots')` and `ctx.get('settingsScope')`, while
 // every other plugin — dsh-image-gen, git-graph, genui, better-sidebar, and the
 // harness's own packages — uses exactly the `ctx.inject` form below, and reads the
@@ -34,7 +34,7 @@
 const OVERLAY = '__DSH_BOOT_ANIM__'
 
 /** Settings namespace the Host half registers; also this card's slot key. */
-const SETTINGS_NAMESPACE = 'boot-animation'
+const SETTINGS_NAMESPACE = 'opening-animation'
 
 /**
  * The Plugins settings page dispatches cards by slot name. It was
@@ -53,7 +53,7 @@ const DICTIONARY_ZH = { title: '启动动画' }
 const DICTIONARY_EN = { title: 'Boot animation' }
 
 /** Where the clip pool is published, relative to the page. */
-const MANIFEST = '/plugins/dsh-boot-animation/clips.json'
+const MANIFEST = '/plugins/dsh-opening-animation/clips.json'
 
 /** Offered dissolve lengths, in milliseconds. */
 const FADE_CHOICES = [1000, 1500, 2000, 3000, 4000]
@@ -90,7 +90,7 @@ const NO_SNAPSHOT = Object.freeze({
   revision: undefined, writable: false, mode: 'host',
 })
 
-const STYLE_ID = 'dsh-boot-animation-card-style'
+const STYLE_ID = 'dsh-opening-animation-card-style'
 
 // No backticks in this sheet: it is a plain string, but the surrounding project
 // convention is that a stray backtick in a CSS blob has already cost this plugin
@@ -707,7 +707,7 @@ exports.apply = function apply(ctx) {
     }
   } catch (error) {
     // Never break the client roster over a decorative overlay.
-    console.warn('boot-animation: client half failed', error)
+    console.warn('opening-animation: client half failed', error)
   }
 
   // 2. Optional, and reached with the dynamic `ctx.inject` rather than `ctx.get`
@@ -738,7 +738,7 @@ exports.apply = function apply(ctx) {
             zh: DICTIONARY_ZH,
             en: DICTIONARY_EN,
           })
-          if (typeof owner.effect === 'function') owner.effect(dictionaries, 'boot-animation: dictionaries')
+          if (typeof owner.effect === 'function') owner.effect(dictionaries, 'opening-animation: dictionaries')
           else dictionaries()
         }
         const t = locale !== undefined && locale !== null && typeof locale.bind === 'function'
@@ -762,7 +762,7 @@ exports.apply = function apply(ctx) {
         // throws when a list slot already holds an entry with the same id and
         // priority:
         //
-        //   list slot "plugins.item" already has an entry with id "boot-animation"
+        //   list slot "plugins.item" already has an entry with id "opening-animation"
         //
         // and that throw lands inside the slot ledger's store notification. React's
         // own subscription rides the same notification, so a duplicate registration
@@ -797,7 +797,7 @@ exports.apply = function apply(ctx) {
             // notification: drop our handle and log, so the card that IS mounted
             // keeps its updates.
             registration = null
-            console.warn('boot-animation: settings card not registered', error)
+            console.warn('opening-animation: settings card not registered', error)
           }
         }
         const withdraw = function () {
@@ -807,7 +807,7 @@ exports.apply = function apply(ctx) {
           try {
             if (typeof dispose === 'function') dispose()
           } catch (error) {
-            console.warn('boot-animation: settings card not withdrawn', error)
+            console.warn('opening-animation: settings card not withdrawn', error)
           }
         }
         const serve = function () {
@@ -816,21 +816,21 @@ exports.apply = function apply(ctx) {
             return withdraw
           })
         }
-        if (typeof owner.effect === 'function') owner.effect(serve, 'boot-animation: settings page')
+        if (typeof owner.effect === 'function') owner.effect(serve, 'opening-animation: settings page')
         else serve()
 
         // The card is silent when it works, which is exactly the state that used to
         // be indistinguishable from "the services never arrived". Diagnostic mode
         // says which one happened.
         if (typeof location !== 'undefined' && String(location.search).indexOf('dshbootdiag=1') >= 0) {
-          console.info('[boot-animation] settings card registered into ' + SLOT)
+          console.info('[opening-animation] settings card registered into ' + SLOT)
         }
       } catch (error) {
-        console.warn('boot-animation: settings card not registered', error)
+        console.warn('opening-animation: settings card not registered', error)
       }
     })
   } catch (error) {
     // The card is a convenience; the animation is the feature.
-    console.warn('boot-animation: settings card wiring failed', error)
+    console.warn('opening-animation: settings card wiring failed', error)
   }
 }

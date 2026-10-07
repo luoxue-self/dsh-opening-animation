@@ -1,4 +1,4 @@
-# install.ps1 - install dsh-boot-animation into a DSH profile.
+# install.ps1 - install dsh-opening-animation into a DSH profile.
 #
 # This is the version to hand to somebody else: nothing here is tied to the
 # author's machine. Every path is either derived from this script's own location
@@ -6,7 +6,7 @@
 # cannot find what it needs rather than writing somewhere unexpected.
 #
 # What it does:
-#   1. a directory link at <profile>\node_modules\dsh-boot-animation
+#   1. a directory link at <profile>\node_modules\dsh-opening-animation
 #   2. one appended row in <profile>\cordis.patch.yml
 # It does NOT touch package.json, does NOT run pnpm, and does NOT restart dsh.
 #
@@ -45,7 +45,7 @@ param(
 if ($Port -gt 0) { $Ports = @($Port) }
 
 $ErrorActionPreference = 'Continue'
-$PluginName = 'dsh-boot-animation'
+$PluginName = 'dsh-opening-animation'
 
 function Say($m) { Write-Host "$(Get-Date -Format 'HH:mm:ss') $m" }
 function Fail($m) { Say "FAILED: $m"; exit 2 }
@@ -198,7 +198,7 @@ $before = Get-Content $PatchFile -Raw
 if ($before -match [regex]::Escape($PluginName)) {
   Say '  the patch layer already mentions this plugin; leaving it alone'
 } else {
-  $row = "- insert:`r`n    - id: boot-animation`r`n      name: $PluginName`r`n"
+  $row = "- insert:`r`n    - id: opening-animation`r`n      name: $PluginName`r`n"
   Add-Content -Path $PatchFile -Value $row -Encoding utf8
   Say '  appended 3 lines'
 }

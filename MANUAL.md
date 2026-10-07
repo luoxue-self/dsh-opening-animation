@@ -1,6 +1,6 @@
 # 使用手册
 
-`dsh-boot-animation` —— 给 DSH 换一段开机动画：每次打开页面，先铺满窗口放一段短片，然后淡入进界面。
+`dsh-opening-animation` —— 给 DSH 换一段开机动画：每次打开页面，先铺满窗口放一段短片，然后淡入进界面。
 
 > 这份是给人看的。给人写的维护/排查细节在 [README.md](README.md)，给下一个 AI 接手看的在 [AGENTS.md](AGENTS.md)。
 
@@ -33,11 +33,11 @@
 
 > **适配 DSH 0.2.0-rc.2。** DSH 换了「插件怎么提供设置」的接法：以前是插件向 Host
 > **注册**一个设置命名空间，现在是插件自己**声明**一份 `Config` 描述，命名空间就是它在
-> profile 补丁里的条目 id（`boot-animation`），设置页照这份描述渲染卡片。
+> profile 补丁里的条目 id（`opening-animation`），设置页照这份描述渲染卡片。
 > 对你的影响：**用法一模一样**，只有两点要知道——设置值现在存在 profile 的
 > `cordis.patch.yml` 里（老版本存在 `settings.yaml`）；另外插件旁边链接的
 > `@deepseek-ai/schemastery` 必须是 DSH 内核用的那份（3.18.4 或更新），旧副本没有
-> `.volatile()`，卡片会整张不出现，并在控制台留一条 `boot-animation:` 开头的黄色告警。
+> `.volatile()`，卡片会整张不出现，并在控制台留一条 `opening-animation:` 开头的黄色告警。
 
 三种进入方式的区别：
 
@@ -108,17 +108,17 @@ node tools/apply-faststart.mjs --apply  # 真的处理
 > profile 是热加载的，摘掉之后**刷新页面**就回到 DSH 原生启动页，不必重启。
 
 摘掉插件就是两件事：删掉 `cordis.patch.yml` 里那个 `- insert:` 块，再删掉 profile 里的
-`node_modules\dsh-boot-animation` 链接。手工做也行——**这个块未必在文件末尾**（DSH 自己会重排
+`node_modules\dsh-opening-animation` 链接。手工做也行——**这个块未必在文件末尾**（DSH 自己会重排
 这一层），所以按名字找，别按位置找；链接用 `rmdir` 删（它只删链接，不会跟进到插件目录里）：
 
 ```powershell
 $Profile = "$env:USERPROFILE\.dsh\profiles\desktop"
-# 1. 在 cordis.patch.yml 里找到这三行并删掉（位置不定，搜 boot-animation）
+# 1. 在 cordis.patch.yml 里找到这三行并删掉（位置不定，搜 opening-animation）
 #      - insert:
-#          - id: boot-animation
-#            name: dsh-boot-animation
+#          - id: opening-animation
+#            name: dsh-opening-animation
 # 2. 删掉链接（不要用 Remove-Item -Recurse，它会顺着链接删进插件目录）
-cmd /c rmdir "$Profile\node_modules\dsh-boot-animation"
+cmd /c rmdir "$Profile\node_modules\dsh-opening-animation"
 ```
 
 > **别用旧版 `uninstall.ps1` 手工改这个文件。** 早先的版本用 PowerShell 读回再写出
@@ -136,7 +136,7 @@ cmd /c rmdir "$Profile\node_modules\dsh-boot-animation"
 | 没有声音 | 先看设置里「播放影片声音」是不是被关掉了；没关就点一下画面。彻底免点击的办法：多点几次让 Chrome 记住这个站点，或在地址栏左侧「网站设置 → 声音」里改成**「允许」**（注意**「自动」不等于「允许」**） |
 | 界面上一行字都没有 | 这是**纯净模式**（「显示界面文字」默认关）。想要标题和进度条，把它打开即可 |
 | 点一下就直接进去了 | 「点鼠标直接进入」被打开了（或声音关了，没有需要解锁的东西）。想恢复「第一下开声音」，把它关掉并确认「播放影片声音」是开的 |
-| 找不到设置卡片 | 看 DSH 启动时的控制台有没有 `boot-animation:` 开头的黄色告警——有，就是插件旁边链接的 `@deepseek-ai/schemastery` 版本太旧（缺 `.volatile()`），照告警里那句话把链接指向内核那份；没有，就确认 DSH 重启过、卡片在「设置 → 插件 → 插件配置」里，是**收起的一行**，要点开 |
+| 找不到设置卡片 | 看 DSH 启动时的控制台有没有 `opening-animation:` 开头的黄色告警——有，就是插件旁边链接的 `@deepseek-ai/schemastery` 版本太旧（缺 `.volatile()`），照告警里那句话把链接指向内核那份；没有，就确认 DSH 重启过、卡片在「设置 → 插件 → 插件配置」里，是**收起的一行**，要点开 |
 | 想看它到底在干什么 | 地址后面加 `?dshbootdiag=1`，画面底部会变成实时读数；卡片里那行素材信息也是同样用途 |
 
 ## 文件都在哪
