@@ -12,7 +12,7 @@
 | **Node.js** | `^22.19.0` 或 `>=24`（DSH 自己就要求这个，通常已经有） |
 | 浏览器 | Chromium 内核（Chrome / Edge）。Firefox 没测过 |
 
-## 安装：三条路，选一条
+## 安装：四条路，选一条
 
 ### 路 A：官方命令（推荐）
 
@@ -59,6 +59,24 @@ sh tools/install.sh                     # dsh web 用的那个（默认就是 we
 - 大多数 profile 会热加载（几秒内生效）；不热加载的，脚本会提醒你手动重启
 - **撤销**：`sh tools/uninstall.sh`（`--profile` 同上）；它只摘掉自己追加的那行、删掉链接，
   并断言 `cordis.patch.yml` 回到安装前的字节
+
+### 路 D：直接从 GitHub 装（还没有 npm 包时用这条）
+
+```sh
+dsh plugin --profile web add github:luoxue-self/dsh-opening-animation
+```
+
+同一个包，只是来源换成仓库而不是 npm 官网——**不需要 npm 账号，也不需要作者先发布**。
+`dsh plugin add` 底层就是 pnpm，而 pnpm 原生认 `github:` 这种写法。
+
+- 想钉死某个版本就在末尾加 `#<commit 或 tag>`，例如
+  `github:luoxue-self/dsh-opening-animation#6e17670`
+- pnpm 解析 `github:` 默认走 SSH，所以**本机得有一个 GitHub 认识的密钥**；
+  不想配 SSH 就用完整地址 `git+https://github.com/luoxue-self/dsh-opening-animation.git`
+- 这条路会把**整个仓库**克隆下来（含 `tools/`、`verify/` 和演示素材），
+  比 npm 发布版大一些；npm 那边只发运行必需的子集
+
+> 桌面版同样不允许 `--profile desktop`，请照路 A 下面那段说明走路 B 或路 C。
 
 ## 装完检查
 

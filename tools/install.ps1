@@ -193,14 +193,45 @@ if (Test-Path $SchemaLink) {
   }
 }
 
+# The patch layer is the user's file and is BOM-less UTF-8 that routinely carries
+# CJK, so it is read and written only through .NET's UTF-8 codec: `Get-Content`
+# without -Encoding decodes it as the ANSI codepage, and on 5.1
+# `Add-Content -Encoding utf8` means UTF-8 WITH a BOM - the very pair the header
+# above warns about, and both are changes to a file this script does not own.
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
 Say '=== 3/5 append the plugin row to the patch layer ==='
-$before = Get-Content $PatchFile -Raw
-if ($before -match [regex]::Escape($PluginName)) {
-  Say '  the patch layer already mentions this plugin; leaving it alone'
+# Decide by the ROW, never by the plugin's name appearing somewhere in the file:
+# this package's own comment above the row names the plugin too, so a substring
+# test reads "the comment is there, the row is not" as "already installed" and
+# silently leaves the profile without its insert row.
+$PatchId = 'opening-animation'
+$lines = @([System.IO.File]::ReadAllLines($PatchFile, $Utf8NoBom))
+$existingRows = 0
+for ($i = 0; $i + 1 -lt $lines.Count; $i++) {
+  if ($lines[$i] -match '^\s*- id:\s*opening-animation\s*$' -and
+      $lines[$i + 1] -match ('^\s*name:\s*' + [regex]::Escape($PluginName) + '\s*$')) {
+    $existingRows += 1
+  }
+}
+if ($existingRows -gt 0) {
+  Say "  an insert row for this plugin is already there ($existingRows of them); leaving it alone"
 } else {
-  $row = "- insert:`r`n    - id: opening-animation`r`n      name: $PluginName`r`n"
-  Add-Content -Path $PatchFile -Value $row -Encoding utf8
+  # Keep the file's own line-ending style rather than imposing CRLF on a file
+  # that may be LF throughout. Detect it from the RAW text: ReadAllLines has
+  # already stripped the terminators, so anything derived from $lines can never
+  # contain a CR and would always report LF.
+  $text = [System.IO.File]::ReadAllText($PatchFile, $Utf8NoBom)
+  $eol = if ($text.Contains("`r`n")) { "`r`n" } else { "`n" }
+  if ($text.Length -gt 0 -and -not $text.EndsWith("`n")) { $text += $eol }
+  $text += "- insert:$eol    - id: $PatchId$eol      name: $PluginName$eol"
+  [System.IO.File]::WriteAllText($PatchFile, $text, $Utf8NoBom)
   Say '  appended 3 lines'
+  if ($text -match [regex]::Escape($PluginName)) {
+    # Only reachable when the name was already in the file without a row: a
+    # comment, or a disabled row. Say so instead of implying a clean slate.
+    Say '  note: the layer already carried this plugin name without an insert row'
+  }
 }
 
 Say '=== 4/5 tell dsh to pick it up ==='
