@@ -3,14 +3,14 @@
   "version": "0.2.0",
   "description": "把 DSH 启动页换成一段全窗口短片，播完淡出进入应用；素材池、进入方式与淡入时长可配置，不改 DSH 本体源码。",
   "license": "MIT",
-  "author": "lxj5820",
+  "author": "luoxue-self",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lxj5820/dsh-boot-animation.git"
+    "url": "git+https://github.com/luoxue-self/dsh-opening-animation.git"
   },
-  "homepage": "https://github.com/lxj5820/dsh-boot-animation#readme",
+  "homepage": "https://github.com/luoxue-self/dsh-opening-animation#readme",
   "bugs": {
-    "url": "https://github.com/lxj5820/dsh-boot-animation/issues"
+    "url": "https://github.com/luoxue-self/dsh-opening-animation/issues"
   },
   "type": "module",
   "main": "entry.js",
